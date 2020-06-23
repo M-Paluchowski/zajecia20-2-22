@@ -1,10 +1,9 @@
 package pl.javastart.demo.examples.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import pl.javastart.demo.examples.service.EmployeeService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
@@ -14,13 +13,25 @@ import java.util.Random;
 @RequestMapping("/employee")
 public class EmployeeController {
 
+//    @Autowired(required = false)
+    private EmployeeService employeeService;
+
+    @Autowired
+    public EmployeeController(EmployeeService employeeService) {
+        System.out.println("Wstrzykuję employeeService");
+        this.employeeService = employeeService;
+    }
+
     @RequestMapping(value = "/delete", method = RequestMethod.GET)
     @ResponseBody
     void deleteEmployee() {
+        employeeService.delete();
         System.out.println("Deleting employee");
     }
 
-    @RequestMapping("/save")
+    @GetMapping("/save")
+//    @PostMapping("/asdf")
+//    @DeleteMapping("/asdf")
     @ResponseBody
     String saveEmployee() {
         System.out.println("Saving employee");
@@ -48,5 +59,10 @@ public class EmployeeController {
             String value = request.getHeader(header);
             System.out.println(header + ": " + value);
         }
+    }
+
+    @RequestMapping("/login")
+    String login() {
+        return "redirect:/employee/save";
     }
 }
